@@ -8,6 +8,8 @@ import com.typesafe.sbt.SbtPgp._
 import org.scalajs.sbtplugin.ScalaJSPlugin
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
+import scala.scalanative.sbtplugin.ScalaNativePlugin
+
 object ScalatestBuild extends Build {
 
   // To run gentests
@@ -288,6 +290,8 @@ object ScalatestBuild extends Build {
       publish := {},
       publishLocal := {}
     )
+    .settings(resolvers += Resolver.sonatypeRepo("snapshots"))
+    .enablePlugins(ScalaNativePlugin)
 
   lazy val scalacticMacroJS = Project("scalacticMacroJS", file("scalactic-macro.js"))
     .settings(sharedSettings: _*)
@@ -304,6 +308,13 @@ object ScalatestBuild extends Build {
       publish := {},
       publishLocal := {}
     ).enablePlugins(ScalaJSPlugin)
+
+  lazy val scalacticEntry = Project("sce", file("sce"))
+    .settings(sharedSettings)
+    .dependsOn(scalactic)
+    .settings(resolvers += Resolver.sonatypeRepo("snapshots"))
+    .enablePlugins(ScalaNativePlugin)
+
 
   lazy val scalactic = Project("scalactic", file("scalactic"))
     .settings(sharedSettings: _*)
@@ -346,6 +357,8 @@ object ScalatestBuild extends Build {
         "Bundle-Vendor" -> "Artima, Inc."
       )
     ).dependsOn(scalacticMacro % "compile-internal, test-internal")  // avoid dependency in pom on non-existent scalactic-macro artifact, per discussion in http://grokbase.com/t/gg/simple-build-tool/133shekp07/sbt-avoid-dependence-in-a-macro-based-project
+     .settings(resolvers += Resolver.sonatypeRepo("snapshots"))
+     .enablePlugins(ScalaNativePlugin)
 
   lazy val scalacticJS = Project("scalacticJS", file("scalactic.js"))
     .settings(sharedSettings: _*)
