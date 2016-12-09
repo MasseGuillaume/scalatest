@@ -311,7 +311,7 @@ object ScalatestBuild extends Build {
 
   lazy val scalacticEntry = Project("sce", file("sce"))
     .settings(sharedSettings)
-    .dependsOn(scalactic)
+    .dependsOn(scalatest, scalacticMacro % "compile-internal, test-internal")
     .settings(resolvers += Resolver.sonatypeRepo("snapshots"))
     .enablePlugins(ScalaNativePlugin)
 
@@ -526,6 +526,9 @@ object ScalatestBuild extends Build {
         "Main-Class" -> "org.scalatest.tools.Runner"
       )
    ).dependsOn(scalacticMacro % "compile-internal, test-internal", scalactic)
+    .settings(resolvers += Resolver.sonatypeRepo("snapshots"))
+    .enablePlugins(ScalaNativePlugin)
+
 
   lazy val scalatestTest = Project("scalatest-test", file("scalatest-test"))
     .settings(sharedSettings: _*)
